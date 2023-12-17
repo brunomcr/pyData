@@ -101,25 +101,25 @@ To execute the `extract_and_store.py` script, follow the steps in the 'How to Us
 ### Database Table
 This is a screenshot of the table in the Oracle database.
 
-![Screenshot 2023-12-17 105402hh](https://github.com/brunomcr/pyData/assets/61769161/58e64fcc-b8a8-4054-a2df-2587349321a8)
+<img src="https://github.com/brunomcr/pyData/assets/61769161/58e64fcc-b8a8-4054-a2df-2587349321a8" width="300"/>
 
 ### Power BI Relationship View
 This screenshot shows the relationship view in Power BI, illustrating how tables are connected.
 
-![Screenshot 2023-12-17 1022401111](https://github.com/brunomcr/pyData/assets/61769161/3d7adf18-0777-424d-b5f0-dc625e847203)
+<img src="https://github.com/brunomcr/pyData/assets/61769161/3d7adf18-0777-424d-b5f0-dc625e847203" width="600"/>
 
 ### Power BI Table View
 This screenshot displays a table within Power BI.
 
-![Screenshot 2023-12-17 wwww](https://github.com/brunomcr/pyData/assets/61769161/e5b9a440-4728-49a0-a5e4-fa8e5af33223)
+<img src="https://github.com/brunomcr/pyData/assets/61769161/e5b9a440-4728-49a0-a5e4-fa8e5af33223" width="600"/>
 
 ### Dashboard - All Years
 This is a screenshot of the dashboard that provides data for all years.
 
-![Screenshot 2023-11-10 061733](https://github.com/brunomcr/pyData/assets/61769161/d00190de-e70d-47c1-b8d1-942f9e71fbc5)
+<img src="https://github.com/brunomcr/pyData/assets/61769161/d00190de-e70d-47c1-b8d1-942f9e71fbc5" width="600"/>
 
 ### Dashboard - Year 2023
 This screenshot represents the dashboard specifically for the year 2023.
 
-![Screenshot 2023-12-17 105746](https://github.com/brunomcr/pyData/assets/61769161/8696d73f-b849-40ef-82ee-d47159461484)
+<img src="https://github.com/brunomcr/pyData/assets/61769161/8696d73f-b849-40ef-82ee-d47159461484" width="600"/>
 
