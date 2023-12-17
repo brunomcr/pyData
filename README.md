@@ -1,8 +1,5 @@
-# 📘 Bitcoin Historical Data Extraction Project
-
-This project utilizes a Python script to extract historical Bitcoin data using the CoinGecko API. It stores this information in an Oracle database and creates interactive dashboards using Power BI for data visualization and analysis.
-
 <div align="center">
+  <h1 style="font-weight: bold; color: white; background-color: black; padding: 10px; font-size: 24px; margin-bottom: 0;">pyData</h1>
   <table style="border-collapse: collapse; opacity: 0;">
     <tr>
       <td>
@@ -20,6 +17,13 @@ This project utilizes a Python script to extract historical Bitcoin data using t
     </tr>
   </table>
 </div>
+
+
+
+# 📘 Bitcoin Historical Data Extraction Project
+
+This project utilizes a Python script to extract historical Bitcoin data using the CoinGecko API. It stores this information in an Oracle database and creates interactive dashboards using Power BI for data visualization and analysis.
+
 
 ### Main Technologies by Category:
 
