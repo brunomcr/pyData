@@ -22,7 +22,7 @@ data_ontem = datetime.now(timezone.utc) - timedelta(days=1)
 # Converta a data de ontem em Unix timestamp
 timestamp_ontem = int(data_ontem.timestamp())
 
-# Defina a URL da API da CoinGecko para o Bitcoin com todo o intervalo disponível
+# Defina a URL da API da CoinGecko para o Bitcoin com
 url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range"
 params = {
     "vs_currency": "usd",
