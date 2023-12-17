@@ -26,15 +26,21 @@ This project utilizes a Python script to extract historical Bitcoin data using t
 ### Main Technologies by Category:
 
 #### Data Extraction:
+```
 - Python 3.9
 - Requests 2.28.1
+```
 
 #### Database:
+```
 - cx_Oracle 8.3.0
 - Oracle Database
+```
 
 #### Data Visualization:
+```
 - Microsoft Power BI
+```
 
 ### Requirements
 To use this project, make sure you have a CoinGecko API key:
@@ -90,3 +96,30 @@ The `extract_and_store.py` script performs the following steps:
 ### Running the Script
 
 To execute the `extract_and_store.py` script, follow the steps in the 'How to Use' section above. After execution, the historical Bitcoin data will be available in the `BTC_HISTORICO` table of your Oracle database.
+
+
+### Database Table
+This is a screenshot of the table in the Oracle database.
+
+![Screenshot 2023-12-17 105402hh](https://github.com/brunomcr/pyData/assets/61769161/58e64fcc-b8a8-4054-a2df-2587349321a8)
+
+### Power BI Relationship View
+This screenshot shows the relationship view in Power BI, illustrating how tables are connected.
+
+![Screenshot 2023-12-17 1022401111](https://github.com/brunomcr/pyData/assets/61769161/3d7adf18-0777-424d-b5f0-dc625e847203)
+
+### Power BI Table View
+This screenshot displays a table within Power BI.
+
+![Screenshot 2023-12-17 wwww](https://github.com/brunomcr/pyData/assets/61769161/e5b9a440-4728-49a0-a5e4-fa8e5af33223)
+
+### Dashboard - All Years
+This is a screenshot of the dashboard that provides data for all years.
+
+![Screenshot 2023-11-10 061733](https://github.com/brunomcr/pyData/assets/61769161/d00190de-e70d-47c1-b8d1-942f9e71fbc5)
+
+### Dashboard - Year 2023
+This screenshot represents the dashboard specifically for the year 2023.
+
+![Screenshot 2023-12-17 105746](https://github.com/brunomcr/pyData/assets/61769161/8696d73f-b849-40ef-82ee-d47159461484)
+
