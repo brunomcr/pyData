@@ -4,18 +4,11 @@ import os
 from datetime import datetime, timezone, timedelta
 from db_connection import oracle_db_connection
 
-# Variáveis de Ambiente BANCO DE DADOS
-# DB_USER = os.environ.get('DB_USER')
-# DB_PASSWORD = os.environ.get('DB_PASSWORD')
-# DB_HOST = os.environ.get('DB_HOST')
-# DB_PORT = os.environ.get('DB_PORT')
-# DB_SERVICE = os.environ.get('DB_SERVICE')
 
 # Variáveis de Ambiente chave de API COINGECKO
 api_key = os.environ.get('COINGECKO_API_KEY')
 
 # Conecte-se ao banco de dados Oracle
-# connection = cx_Oracle.connect(f'{DB_USER}/{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_SERVICE}')
 connection = oracle_db_connection()
 cursor = connection.cursor()
 
