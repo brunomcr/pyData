@@ -2,32 +2,37 @@ import cx_Oracle
 import requests
 import os
 from datetime import datetime, timezone, timedelta
+from db_connection import oracle_db_connection
 
-# Variaveis de Ambiente BANCO DE DADOS
-DB_USER=os.environ.get('DB_USER')
-DB_PASSWORD=os.environ.get('DB_PASSWORD')
-DB_HOST=os.environ.get('DB_HOST')
-DB_PORT=os.environ.get('DB_PORT')
-DB_SERVICE=os.environ.get('DB_SERVICE')
+# Variáveis de Ambiente BANCO DE DADOS
+# DB_USER = os.environ.get('DB_USER')
+# DB_PASSWORD = os.environ.get('DB_PASSWORD')
+# DB_HOST = os.environ.get('DB_HOST')
+# DB_PORT = os.environ.get('DB_PORT')
+# DB_SERVICE = os.environ.get('DB_SERVICE')
 
-# Variaveis de Ambiente chave de API COINGECKO
+# Variáveis de Ambiente chave de API COINGECKO
 api_key = os.environ.get('COINGECKO_API_KEY')
 
 # Conecte-se ao banco de dados Oracle
-connection = cx_Oracle.connect(f'{DB_USER}/{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_SERVICE}')
+# connection = cx_Oracle.connect(f'{DB_USER}/{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_SERVICE}')
+connection = oracle_db_connection()
+cursor = connection.cursor()
 
-# Calcule a data de ontem
+# Calcule a data de ontem e de 365 dias atrás a partir de ontem
 data_ontem = datetime.now(timezone.utc) - timedelta(days=1)
+data_inicio = data_ontem - timedelta(days=365)
 
-# Converta a data de ontem em Unix timestamp
+# Converta a data de início e de ontem em Unix timestamp
+timestamp_inicio = int(data_inicio.timestamp())
 timestamp_ontem = int(data_ontem.timestamp())
 
-# Defina a URL da API da CoinGecko para o Bitcoin com
+# Defina a URL da API da CoinGecko para o Bitcoin
 url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range"
 params = {
     "vs_currency": "usd",
-    "from": "0",  # Use o valor mínimo (0) para obter os dados mais antigos
-    "to": timestamp_ontem  # Data de término em formato Unix timestamp (ontem)
+    "from": str(timestamp_inicio),
+    "to": str(timestamp_ontem)
 }
 
 # Inclua a chave de API na solicitação
@@ -38,40 +43,34 @@ headers = {
 # Faça a solicitação GET para obter os dados do histórico no intervalo de datas especificado
 response = requests.get(url, params=params, headers=headers)
 
-# Verifique se a solicitação foi bem-sucedida
+linhas_inseridas = 0  # Inicialize o contador de linhas inseridas
+
 if response.status_code == 200:
     bitcoin_data = response.json()
 
-    # Estabeleça uma conexão com o banco de dados
-    cursor = connection.cursor()
+    # Consultar a maior data presente na tabela BTC_HISTORICO_TESTE
+    cursor.execute("SELECT TO_CHAR(MAX(data), 'DD-MON-YYYY') FROM BTC_HISTORICO")
+    max_data_str = cursor.fetchone()[0]
+    max_data = datetime.strptime(max_data_str, '%d-%b-%Y').date() if max_data_str else datetime(1970, 1, 1).date()
 
-    # Acesse os campos "prices" e "total_volumes" no JSON
-    prices = bitcoin_data['prices']
-    total_volumes = bitcoin_data['total_volumes']
+    for price in bitcoin_data['prices']:
+        data_unix_timestamp = price[0] / 1000
+        data_utc = datetime.fromtimestamp(data_unix_timestamp, timezone.utc).date()
 
-    # Inserir os dados na tabela
-    cursor.execute("TRUNCATE TABLE BTC_HISTORICO ")
+        if data_utc > max_data:
+            data_formatada = data_utc.strftime('%d-%b-%Y').upper()
+            preco = price[1]
+            volume = next((v[1] for v in bitcoin_data['total_volumes'] if v[0] == price[0]), 0)  # Encontra o volume correspondente
 
-    # Insira os dados na tabela do banco de dados
-    for i in range(len(prices)):
-        data_unix_timestamp = prices[i][0] / 1000
-        data_utc = datetime.fromtimestamp(data_unix_timestamp, timezone.utc)
-        data_formatada = data_utc.strftime('%d-%b-%Y').upper()  # Formate a data como "DD-MON-AAAA" e converta para maiúsculas
-        preco = prices[i][1]
-        volume = total_volumes[i][1]
+            # Insere os novos registros na tabela
+            cursor.execute("INSERT INTO BTC_HISTORICO (data, preco, volume) VALUES (:data, :preco, :volume)",
+                           data=data_formatada, preco=preco, volume=volume)
+            linhas_inseridas += 1  # Incrementa o contador
 
-        # Inserir os dados na tabela
-        cursor.execute("INSERT INTO BTC_HISTORICO (data, preco, volume) VALUES (:data, :preco, :volume)",
-                       data=data_formatada, preco=preco, volume=volume)
-
-    # Confirme a transação e feche o cursor
     connection.commit()
-    cursor.close()
-
-    # Feche a conexão com o banco de dados
-    connection.close()
-
+    print(f"{linhas_inseridas} linhas foram inseridas.")  # Mostra o número de linhas inseridas
 else:
-    print("Erro na solicitação da API:")
-    print(f"Status Code: {response.status_code}")
-    print(f"Resposta: {response.text}")
+    print("Erro na solicitação da API:", response.status_code, response.text)
+
+cursor.close()
+connection.close()
