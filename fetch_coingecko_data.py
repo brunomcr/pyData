@@ -26,17 +26,17 @@ def fetch_coingecko_data():
     if response.status_code == 200:
         data = response.json()
 
-        # Estrutura de retorno desejada
-        result = []
-        # Assegure-se de que 'prices' e 'total_volumes' têm dados correspondentes
-        if 'prices' in data and 'total_volumes' in data:
-            for price, volume in zip(data['prices'], data['total_volumes']):
-                result.append({
-                    "date": datetime.fromtimestamp(price[0] / 1000).strftime('%Y-%m-%d'),
-                    "price": price[1],
-                    "volume": volume[1]
-                })
-        return result
+        # # Estrutura de retorno desejada
+        # result = []
+        # # Assegure-se de que 'prices' e 'total_volumes' têm dados correspondentes
+        # if 'prices' in data and 'total_volumes' in data:
+        #     for price, volume in zip(data['prices'], data['total_volumes']):
+        #         result.append({
+        #             "date": datetime.fromtimestamp(price[0] / 1000).strftime('%Y-%m-%d'),
+        #             "price": price[1],
+        #             "volume": volume[1]
+        #         })
+        return data
     else:
         print("Erro na solicitação da API:", response.status_code, response.text)
         return None

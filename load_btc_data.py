@@ -11,12 +11,11 @@ def load_data_oracle():
     connection = oracle_db_connection()
     cursor = connection.cursor()
 
-    # Ler dados do arquivo JSON
-    with open('bitcoin_data.json', 'r') as f:
-        bitcoin_data = json.load(f)
+    # Busca os dados diretamente da API Coingecko
+    bitcoin_data = fetch_coingecko_data()
 
     # Verificar a última data registrada no banco
-    cursor.execute("SELECT TO_CHAR(MAX(data), 'DD-MON-YYYY') FROM BTC_HISTORICO")
+    cursor.execute("SELECT TO_CHAR(MAX(data), 'DD-MON-YYYY') FROM BTC_HISTORICO_2")
     max_data_str = cursor.fetchone()[0]
     max_data = datetime.strptime(max_data_str, '%d-%b-%Y').date() if max_data_str else datetime(1970, 1, 1).date()
 
@@ -30,7 +29,7 @@ def load_data_oracle():
             preco = price[1]
             volume = next((v[1] for v in bitcoin_data['total_volumes'] if v[0] == price[0]), 0)
 
-            cursor.execute("INSERT INTO BTC_HISTORICO (data, preco, volume) VALUES (:data, :preco, :volume)",
+            cursor.execute("INSERT INTO BTC_HISTORICO_2 (data, preco, volume) VALUES (:data, :preco, :volume)",
                            data=data_formatada, preco=preco, volume=volume)
             linhas_inseridas += 1
 
@@ -69,4 +68,3 @@ def load_data_mongodb():
             linhas_inseridas += 1
 
     print(f"{linhas_inseridas} linhas foram inseridas.")
-

@@ -19,7 +19,6 @@ def oracle_db_connection():
     # Conexão com o banco
     return cx_Oracle.connect(f'{db_user}/{db_password}@{db_host}:{db_port}/{db_service}')
 
-
 def mongo_db_connection():
     # Variáveis de Ambiente BANCO DE DADOS
     mongo_user = os.environ.get('MONGO_USER')
