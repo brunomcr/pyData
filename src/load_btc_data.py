@@ -1,9 +1,6 @@
-import json
-from datetime import datetime, timezone, timedelta
-from db_connection import oracle_db_connection, mongo_db_connection
-from pymongo import MongoClient
-import os
-from fetch_coingecko_data import fetch_coingecko_data
+from datetime import datetime, timezone
+from src.db_connection import oracle_db_connection, mongo_db_connection
+from src.fetch_coingecko_data import fetch_coingecko_data
 
 
 def load_data_oracle():
@@ -42,26 +39,40 @@ def load_data_oracle():
 def load_data_mongodb():
     # Conexão ao banco
     db = mongo_db_connection()
-    # print(f'LISTA: {db.list_collection_names()}')
+
+    # Seleciona/Cria Colecao
     collection = db['BTC_HISTORICO']
     print(f'collection {collection}')
 
     # Busca os dados diretamente da API Coingecko
     bitcoin_data = fetch_coingecko_data()
 
+    # Estrutura de retorno desejada
+    result = []
+    # Assegure-se de que 'prices' e 'total_volumes' têm dados correspondentes
+    if 'prices' in bitcoin_data and 'total_volumes' in bitcoin_data:
+        for price, volume in zip(bitcoin_data['prices'], bitcoin_data['total_volumes']):
+            result.append({
+                "date": datetime.fromtimestamp(price[0] / 1000),
+                "price": price[1],
+                "volume": volume[1]
+            })
+
     # Verificar a última data registrada no banco
-    latest_record = collection.find_one(sort=[("data", -1)])
+    latest_record = collection.find_one(sort=[("date", -1)])
     print(f'latest_record {latest_record}')
-    max_data = latest_record["data"] if latest_record else datetime(1970, 1, 1)
+
+    max_date = latest_record["date"] if latest_record else datetime(1970, 1, 1)
+    print(f'max_date {type(max_date)}')
 
     linhas_inseridas = 0
-    for data_point in bitcoin_data:
-        data_point_date = datetime.strptime(data_point['date'], '%Y-%m-%d')
+    for data_point in result:
+        data_point_date = data_point['date']
 
-        if data_point_date > max_data:
+        if data_point_date > max_date:
             document = {
-                "data": data_point_date,
-                "preco": data_point['price'],
+                "date": data_point_date,
+                "price": data_point['price'],
                 "volume": data_point['volume']
             }
             collection.insert_one(document)

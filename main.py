@@ -1,8 +1,7 @@
-import cx_Oracle
 import requests
 import os
 from datetime import datetime, timezone, timedelta
-from db_connection import oracle_db_connection
+from src.db_connection import oracle_db_connection
 
 
 # Variáveis de Ambiente chave de API COINGECKO

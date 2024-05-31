@@ -1,30 +1,41 @@
-version: '3.1'
-
 services:
-  mongo:
-    image: mongo
-    container_name: mongo
-    restart: always
+  mongo-db:
+    image: mongo:latest
+    env_file: .env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: senha
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      py-network:
+        ipv4_address: 172.30.0.3
+    container_name: pyData_mongodb_container
 
   mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    restart: always
-    depends_on:
-      - mongo
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: senha
-      ME_CONFIG_MONGODB_SERVER: mongo
+    image: mongo-express:latest
     ports:
-      - 8081:8081
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: "mongo-db"
+    depends_on:
+      - mongo-db
+    networks:
+      py-network:
+        ipv4_address: 172.30.0.4
+    container_name: pyData_mongo_express_container
 
 volumes:
   mongodb_data:
+    driver: local
+
+networks:
+  py-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
