@@ -37,12 +37,12 @@ def load_data_oracle():
 
 
 def load_data_mongodb():
-    # Conexão ao banco
+    # Conexão ao banco de dados MongoDB
     db = mongo_db_connection()
 
-    # Seleciona/Cria Colecao
-    collection = db['BTC_HISTORICO']
-    print(f'collection {collection}')
+    # Seleciona ou cria a coleção 'btcHistorico' dentro do banco de dados
+    collection = db['btcHistorico']
+    # print(f'collection {collection}')
 
     # Busca os dados diretamente da API Coingecko
     bitcoin_data = fetch_coingecko_data()
@@ -53,29 +53,31 @@ def load_data_mongodb():
     if 'prices' in bitcoin_data and 'total_volumes' in bitcoin_data:
         for price, volume in zip(bitcoin_data['prices'], bitcoin_data['total_volumes']):
             result.append({
-                "date": datetime.fromtimestamp(price[0] / 1000),
-                "price": price[1],
+                "data": datetime.fromtimestamp(price[0] / 1000),
+                "preco": price[1],
                 "volume": volume[1]
             })
 
-    # Verificar a última data registrada no banco
-    latest_record = collection.find_one(sort=[("date", -1)])
-    print(f'latest_record {latest_record}')
+    # Verificar a última data registrada no banco de dados
+    latest_record = collection.find_one(sort=[("data", -1)])
+    # print(f'latest_record {latest_record}')
 
-    max_date = latest_record["date"] if latest_record else datetime(1970, 1, 1)
-    print(f'max_date {type(max_date)}')
+    # Define a data máxima como a data do último registro ou 1º de janeiro de 1970 se não houver registros
+    max_date = latest_record["data"] if latest_record else datetime(1970, 1, 1)
+    # print(f'max_date {type(max_date)}')
 
     linhas_inseridas = 0
     for data_point in result:
-        data_point_date = data_point['date']
+        data_point_date = data_point['data']
 
+        # Insere os novos dados que possuem uma data posterior à última registrada
         if data_point_date > max_date:
             document = {
-                "date": data_point_date,
-                "price": data_point['price'],
+                "data": data_point_date,
+                "preco": data_point['preco'],
                 "volume": data_point['volume']
             }
-            collection.insert_one(document)
-            linhas_inseridas += 1
+            collection.insert_one(document)  # Insere o documento na coleção
+            linhas_inseridas += 1  # Incrementa o contador de linhas inseridas
 
-    print(f"{linhas_inseridas} linhas foram inseridas.")
+    print(f"{linhas_inseridas} linhas foram inseridas.")  # Imprime o total de linhas inseridas
