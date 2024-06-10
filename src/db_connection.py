@@ -22,7 +22,7 @@ def oracle_db_connection():
     except Exception as e:
         print('Conexão com Oracle sem sucesso\n'
               f'Erro: {e}')
-        return exit(1)
+        return
 
 
 def mongo_db_connection():
@@ -48,5 +48,5 @@ def mongo_db_connection():
     except Exception as e:
         print('Conexão com Mongo via Docker sem sucesso\n'
               f'Erro: {e}')
-        return exit(1)
+        return
 
