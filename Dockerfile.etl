@@ -1,0 +1,15 @@
+# Dockerfile.etl
+FROM jupyter/pyspark-notebook:latest
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Copiar os arquivos de requisitos e instalar as dependências
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o restante do código para o contêiner
+COPY . .
+
+# Comando para executar o script de coleta de dados
+CMD ["python", "src/main.py"]

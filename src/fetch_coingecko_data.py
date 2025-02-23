@@ -1,33 +1,19 @@
-import requests
-import os
-from datetime import datetime, timezone, timedelta
+import requests  # Importing the requests library
+import logging  # Importing the logging module
 
+# Configuring the logging
+logging.basicConfig(level=logging.INFO)
 
 def fetch_coingecko_data():
-    # Variáveis de Ambiente chave de API COINGECKO
-    api_key = os.environ.get('COINGECKO_API_KEY')
-
-    # Calcule as datas necessárias
-    data_fim = datetime.now(timezone.utc) - timedelta(days=1)
-    data_inicio = data_fim - timedelta(days=365)
-
-    # Passara para timestamp UNIX
-    timestamp_inicio = int(data_inicio.timestamp())
-    timestamp_ontem = int(data_fim.timestamp())
-
-    # URL e parâmetros para solicitação da API
-    url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range"
-    params = {
-        "vs_currency": "usd",
-        "from": str(timestamp_inicio),
-        "to": str(timestamp_ontem)
-    }
-    headers = {'Authorization': f'Bearer {api_key}'}
-
-    # Solicitação GET
-    response = requests.get(url, params=params, headers=headers)
+    url = "https://api.coingecko.com/api/v3/coins/bitcoin"
+    logging.info("Making request to CoinGecko API...")
+    response = requests.get(url)
+    
     if response.status_code == 200:
-        return response.json()
+        logging.info("Request successful. Data received.")
+        data = response.json()  # Armazena a resposta JSON
+        logging.info(f"Primeiras linhas da resposta: {data}")  # Log das primeiras linhas da resposta
+        return data  # Return the JSON response if the request was successful
     else:
-        print("Erro na solicitação da API:", response.status_code, response.text)
-        return None
+        logging.error(f"Request error: {response.status_code}")
+        return None  # Return None if the request failed 

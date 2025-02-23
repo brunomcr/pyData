@@ -1,0 +1,46 @@
+# Dockerfile.jupyter
+FROM jupyter/pyspark-notebook:latest
+
+USER root
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create and set permissions for Jupyter directories
+RUN mkdir -p /home/jovyan/.local/share/jupyter && \
+    mkdir -p /home/jovyan/.local/share/jupyter/runtime && \
+    chown -R jovyan:users /home/jovyan/.local
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Install additional Python packages for data visualization
+RUN pip install --no-cache-dir \
+    matplotlib \
+    pandas \
+    numpy \
+    scikit-learn \
+    pyspark
+
+# Copiar o restante do código para o contêiner
+COPY . .
+
+ENV PYTHONUNBUFFERED=1
+
+# Configure matplotlib to use a non-interactive backend
+RUN mkdir -p /home/jovyan/.config/matplotlib && \
+    echo "backend: Agg" > /home/jovyan/.config/matplotlib/matplotlibrc
+
+
+# Set proper permissions
+RUN chown -R jovyan:users /app && \
+    chmod -R 755 /app
+
+USER ${NB_UID}
+
+# Expor a porta do Jupyter Notebook
+EXPOSE 8888
+
+# Comando para iniciar o Jupyter Notebook
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"] 
