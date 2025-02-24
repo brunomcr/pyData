@@ -1,15 +1,25 @@
 # Dockerfile.etl
 FROM jupyter/pyspark-notebook:latest
 
+USER root
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Definir o diretório de trabalho
 WORKDIR /app
+
+# Copiar o restante do código para o contêiner
+COPY . .
 
 # Copiar os arquivos de requisitos e instalar as dependências
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o restante do código para o contêiner
-COPY . .
+ENV PYTHONUNBUFFERED=1
+
+USER ${NB_UID}
 
 # Comando para executar o script de coleta de dados
 CMD ["python", "src/main.py"]

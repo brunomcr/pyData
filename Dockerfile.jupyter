@@ -26,6 +26,10 @@ RUN pip install --no-cache-dir \
 # Copiar o restante do código para o contêiner
 COPY . .
 
+# Copiar os arquivos de requisitos e instalar as dependências
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
 ENV PYTHONUNBUFFERED=1
 
 # Configure matplotlib to use a non-interactive backend
@@ -43,4 +47,4 @@ USER ${NB_UID}
 EXPOSE 8888
 
 # Comando para iniciar o Jupyter Notebook
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"] 
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--notebook-dir=/data"]

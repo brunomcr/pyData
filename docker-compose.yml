@@ -1,33 +1,49 @@
-version: '3.8'
-
 services:
   data-collector:
     build:
       context: .
       dockerfile: Dockerfile.etl
+    image: pydata-etl
     volumes:
+      - ./:/data
       - ./data:/app/data
-      - ./src:/app/src
     environment:
+      - SPARK_LOCAL_IP=127.0.0.1
+      - PYTHONUNBUFFERED=1
+      - SPARK_DRIVER_MEMORY=8g
+      - SPARK_EXECUTOR_MEMORY=6g
       - COINGECKO_API_KEY=${COINGECKO_API_KEY}
+    deploy:
+          resources:
+            limits:
+              memory: 6g
+              cpus: '4'
+    tmpfs:
+      - /tmp:exec,size=100G
+    user: "${UID}:${GID}" 
 
   jupyter:
     build:
       context: .
       dockerfile: Dockerfile.jupyter
+    image: pydata-jupyter
     volumes:
-      - ./data:/app/data
-      - ./src:/app/src
+      - ./:/data
+      - ./data:/app/data  
     ports:
       - "8888:8888"
-
-volumes:
-  mongodb_data:
-    driver: local
-
-networks:
-  py-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/16
+      - "4040:4040"  
+    environment:
+      - SPARK_LOCAL_IP=jupyter
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONUNBUFFERED=1
+      - SPARK_DRIVER_MEMORY=8g
+      - SPARK_EXECUTOR_MEMORY=8g
+      - SPARK_EXECUTOR_CORES=4
+      - SPARK_WORKER_MEMORY=8g
+      - SPARK_WORKER_CORES=4
+    deploy:
+      resources:
+        limits:
+          memory: 6g
+          cpus: '4'
