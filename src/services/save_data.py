@@ -4,7 +4,7 @@ from utils.logging_config import setup_logging  # Importando a configuração de
 setup_logging()  # Configurando o logging
 import logging  # Importando o módulo de logging
 
-def save_data(data, spark, config):  # Atualizado para aceitar spark e config como parâmetros
+def save_data_bronze(data, spark, output):  # Renomeado para save_data_bronze
     # Verifica se os dados estão presentes
     if not data:
         logging.error("Dados retornados estão vazios.")
@@ -32,5 +32,14 @@ def save_data(data, spark, config):  # Atualizado para aceitar spark e config co
     logging.info("Salvando dados em formato Parquet...")
 
     # Salvar os dados particionados por ano, mês e dia
-    df.write.partitionBy("year", "month", "day").parquet(config.bronze_path_bitcoin_data, mode='overwrite')  # Usando a variável de path
+    df.write.partitionBy("year", "month", "day").parquet(output, mode='overwrite')  # Usando a variável de path
     logging.info("Dados salvos com sucesso.") 
+
+def save_data_silver(df, spark, output):  # Removendo a criação de DataFrame
+    """Salva os dados limpos na camada silver em formato Parquet, particionado por ano, mês e dia."""
+    logging.info("Salvando dados na camada silver em formato Parquet...")
+
+    # Salvar os dados particionados por ano, mês e dia
+    df.write.partitionBy("year", "month", "day").parquet(output, mode='overwrite')  # Usando o DataFrame diretamente
+    
+    logging.info("Dados salvos na camada silver com sucesso.") 
