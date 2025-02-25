@@ -1,6 +1,5 @@
-import pandas as pd
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, from_unixtime, hour, date_format
 
 def clean_data(bronze_path, silver_path, spark):
     """Limpa os dados recebidos da camada bronze, removendo linhas nulas."""
@@ -22,5 +21,8 @@ def transform_data(df):
     df = df.withColumn('price', col('price').cast('float'))
     df = df.withColumn('market_cap', col('market_cap').cast('float'))
     df = df.withColumn('total_volume', col('total_volume').cast('float'))
+
+    # Extrai a hora do timestamp em formato hh:mm:ss
+    df = df.withColumn("hour", date_format(from_unixtime(col("timestamp") / 1000), "HH:mm:ss"))  
 
     return df  # Retorna o DataFrame transformado 

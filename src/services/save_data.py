@@ -1,4 +1,4 @@
-from pyspark.sql.functions import from_unixtime, year, month, dayofmonth  # Importando funções para manipulação de data
+from pyspark.sql.functions import from_unixtime, year, month, dayofmonth, col  # Importando funções para manipulação de data e col para referência de coluna
 from utils.logging_config import setup_logging  # Importando a configuração de logging
 
 setup_logging()  # Configurando o logging
