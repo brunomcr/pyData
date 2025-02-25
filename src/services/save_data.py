@@ -40,6 +40,6 @@ def save_data_silver(df, spark, output):  # Removendo a criação de DataFrame
     logging.info("Salvando dados na camada silver em formato Parquet...")
 
     # Salvar os dados particionados por ano, mês e dia
-    df.write.partitionBy("year", "month", "day").parquet(output, mode='overwrite')  # Usando o DataFrame diretamente
+    df.write.partitionBy("year", "month", "day").parquet(output, mode='append')  # Alterado para append
     
     logging.info("Dados salvos na camada silver com sucesso.") 
