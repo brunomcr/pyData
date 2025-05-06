@@ -9,7 +9,7 @@ def fetch_coingecko_data():
 
     # Calcule as datas necessárias
     data_fim = datetime.now(timezone.utc) - timedelta(days=1)
-    data_inicio = data_fim - timedelta(days=365)
+    data_inicio = data_fim - timedelta(days=364)
 
     # Passara para timestamp UNIX
     timestamp_inicio = int(data_inicio.timestamp())
